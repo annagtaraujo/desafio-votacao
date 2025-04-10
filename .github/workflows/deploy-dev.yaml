@@ -10,20 +10,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Docker
-      uses: docker/setup-buildx-action@v2
-
     - name: Decode kubeconfig
       run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
+        echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > kubeconfig.yaml
 
-    - name: Load images into Minikube
+    - name: Set KUBECONFIG and test connection
       run: |
-        minikube start --driver=docker
-        minikube image load annagtaraujo/frontend-votacao:latest
-        minikube image load annagtaraujo/backend-votacao:latest
+        export KUBECONFIG=$PWD/kubeconfig.yaml
+        kubectl get pods -A
 
     - name: Apply Kubernetes configs
       run: |
+        export KUBECONFIG=$PWD/kubeconfig.yaml
         kubectl apply -f k8s/dev/deployment/
