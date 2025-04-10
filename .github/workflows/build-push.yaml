@@ -1,0 +1,44 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Extract short SHA
+      id: vars
+      run: echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./apps/backend
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/backend-votacao:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/backend-votacao:${{ steps.vars.outputs.sha_short }}
+
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./apps/frontend
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/frontend-votacao:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/frontend-votacao:${{ steps.vars.outputs.sha_short }}
