@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-votacao
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: frontend
+      app: frontend-votacao
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend-votacao
     spec:
       containers:
-        - name: frontend
-          image: annagtaraujo/frontend:latest
+        - name: frontend-votacao
+          image: annagtaraujo/frontend-votacao:latest
           ports:
             - containerPort: 80
 ---
@@ -24,7 +24,7 @@ metadata:
   name: frontend-service
 spec:
   selector:
-    app: frontend
+    app: frontend-votacao
   ports:
     - protocol: TCP
       port: 80
