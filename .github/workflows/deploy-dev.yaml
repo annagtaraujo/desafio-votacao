@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -13,17 +13,12 @@ jobs:
     - name: Set up Docker
       uses: docker/setup-buildx-action@v2
 
-    - name: Build Docker images
-      run: |
-        docker build -t annagtaraujo/frontend:latest ./frontend
-        docker build -t annagtaraujo/backend:latest ./backend
-
     - name: Load images into Minikube
       run: |
         minikube start --driver=docker
-        minikube image load annagtaraujo/frontend:latest
-        minikube image load annagtaraujo/backend:latest
+        minikube image load annagtaraujo/frontend-votacao:latest
+        minikube image load annagtaraujo/backend-votacao:latest
 
     - name: Apply Kubernetes configs
       run: |
-        kubectl apply -f k8s/
+        kubectl apply -f k8s/dev/deployment/
