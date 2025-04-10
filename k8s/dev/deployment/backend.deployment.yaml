@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: backend-votacao
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: backend-votacao
   template:
     metadata:
       labels:
-        app: backend
+        app: backend-votacao
     spec:
       containers:
-        - name: backend
-          image: annagtaraujo/backend:latest
+        - name: backend-votacao
+          image: annagtaraujo/backend-votacao:latest
           ports:
             - containerPort: 5000
 ---
@@ -24,7 +24,7 @@ metadata:
   name: backend-service
 spec:
   selector:
-    app: backend
+    app: backend-votacao
   ports:
     - protocol: TCP
       port: 5000
