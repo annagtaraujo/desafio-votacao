@@ -9,9 +9,8 @@ on:
 
 permissions:
   contents: read
-  actions: write
-  packages: write
-  id-token: write
+  actions: read
+  packages: read
 
 jobs:
   deploy:
@@ -38,27 +37,23 @@ jobs:
         kubectl get pods -A
 
     - name: Download image tag artifact via GH CLI
-      env:
-        GH_TOKEN: ${{ github.token }}
       run: |
-        run_id=${{ github.event.workflow_run.id }}
-    
-        echo "📦 Buscando artifacts do run: $run_id"
-    
-        artifacts=$(gh api repos/${{ github.repository }}/actions/runs/$run_id/artifacts)
+        echo "📦 Buscando artifacts do run: ${{ github.event.workflow_run.id }}"
+        export GH_TOKEN="${{ github.token }}"
+        artifacts=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts)
         artifact_id=$(echo "$artifacts" | jq -r '.artifacts[] | select(.name=="image-tags") | .id')
-    
+
         if [ -z "$artifact_id" ]; then
           echo "❌ Artifact 'image-tags' não encontrado."
           exit 1
         fi
-    
+
         echo "✅ Artifact encontrado: $artifact_id — baixando..."
         gh api \
           -H "Accept: application/vnd.github+json" \
           repos/${{ github.repository }}/actions/artifacts/$artifact_id/zip \
           > artifact.zip
-    
+
         unzip artifact.zip
 
     - name: Export image tag variables
