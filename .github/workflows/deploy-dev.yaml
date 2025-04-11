@@ -17,6 +17,9 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT_ARTIFACTS_BBB }}
+
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -37,8 +40,6 @@ jobs:
         kubectl get pods -A
 
     - name: Download image tag artifact via GH CLI
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "📦 Buscando artifacts do run: ${{ github.event.workflow_run.id }}"
 
@@ -57,7 +58,6 @@ jobs:
           > artifact.zip
 
         unzip artifact.zip
-
 
     - name: Export image tag variables
       run: |
