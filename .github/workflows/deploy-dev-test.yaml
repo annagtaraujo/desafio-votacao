@@ -36,7 +36,7 @@ jobs:
       run: |
         kubectl get pods -A
 
-    - name: Debug: Check script version
+    - name: Debug - Check script version
       run: |
         echo "=== VERSÃO COM CURL ==="
 
