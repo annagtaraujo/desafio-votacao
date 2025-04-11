@@ -16,6 +16,7 @@ spec:
       containers:
         - name: frontend-votacao
           image: annagtaraujo/frontend-votacao:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 80
 ---
