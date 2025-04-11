@@ -39,7 +39,7 @@ jobs:
 
     - name: Download image tag artifact via GH CLI
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         run_id=${{ github.event.workflow_run.id }}
     
