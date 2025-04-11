@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   docker:
+    name: Build and Push Docker Images
     runs-on: ubuntu-22.04
 
     steps:
@@ -60,3 +61,4 @@ jobs:
         name: image-tags
         path: image_tags.env
         if-no-files-found: error
+        retention-days: 7

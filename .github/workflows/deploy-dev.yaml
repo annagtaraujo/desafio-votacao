@@ -39,7 +39,7 @@ jobs:
 
     - name: Download image tag artifact via GH CLI
       env:
-        GH_TOKEN: ${{ secrets.GH_PAT_ARTIFACTS_BBB }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         run_id=${{ github.event.workflow_run.id }}
 
@@ -50,6 +50,8 @@ jobs:
 
         if [ -z "$artifact_id" ]; then
           echo "❌ Artifact 'image-tags' não encontrado."
+          echo "Artifacts disponíveis:"
+          echo "$artifacts" | jq -r '.artifacts[].name'
           exit 1
         fi
 
