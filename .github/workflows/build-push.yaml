@@ -7,10 +7,9 @@ on:
 permissions:
   contents: read
   actions: write
-  artifacts: write
   packages: write
   id-token: write
-  
+
 jobs:
   docker:
     runs-on: ubuntu-22.04
