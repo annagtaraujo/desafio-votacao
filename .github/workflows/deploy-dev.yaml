@@ -30,8 +30,7 @@ jobs:
       with:
         name: image-tags
         path: .
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.GH_PAT_ARTIFACTS_BBB }}
 
     - name: Export image tag variables
       run: |
