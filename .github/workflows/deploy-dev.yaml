@@ -39,7 +39,7 @@ jobs:
 
     - name: Download image tag artifact via GH CLI
       env:
-        GH_TOKEN: ${{ secrets.GH_PAT_ARTIFACTS_BBB }}
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         run_id=${{ github.event.workflow_run.id }}
     
@@ -60,7 +60,6 @@ jobs:
           > artifact.zip
     
         unzip artifact.zip
-
 
     - name: Export image tag variables
       run: |
