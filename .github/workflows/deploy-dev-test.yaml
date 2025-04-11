@@ -80,6 +80,6 @@ jobs:
         BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
         FRONTEND_IMAGE: ${{ env.FRONTEND_IMAGE }}
       run: |
-        envsubst < k8s/dev/deployment/backend.yaml | kubectl apply -f -
-        envsubst < k8s/dev/deployment/frontend.yaml | kubectl apply -f -
+        envsubst < k8s/dev/deployment/backend-deploy.yaml | kubectl apply -f -
+        envsubst < k8s/dev/deployment/frontend-deploy.yaml | kubectl apply -f -
 
