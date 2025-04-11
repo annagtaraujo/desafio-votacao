@@ -6,6 +6,12 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+  actions: write
+  packages: write
+  id-token: write
+
 jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
