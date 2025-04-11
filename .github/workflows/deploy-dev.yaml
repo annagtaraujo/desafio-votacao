@@ -36,6 +36,10 @@ jobs:
       run: |
         kubectl get pods -A
 
+    - name: Debug: Check script version
+      run: |
+        echo "=== VERSÃO COM CURL ==="
+
     - name: Download artifact using REST API
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -79,6 +83,3 @@ jobs:
         envsubst < k8s/dev/deployment/backend.yaml | kubectl apply -f -
         envsubst < k8s/dev/deployment/frontend.yaml | kubectl apply -f -
 
-    - name: Debug: Check script version
-      run: |
-        echo "=== VERSÃO COM CURL ==="
