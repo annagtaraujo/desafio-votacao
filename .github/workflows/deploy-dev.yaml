@@ -37,9 +37,11 @@ jobs:
         kubectl get pods -A
 
     - name: Download image tag artifact via GH CLI
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         echo "📦 Buscando artifacts do run: ${{ github.event.workflow_run.id }}"
-        export GH_TOKEN="${{ github.token }}"
+
         artifacts=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/artifacts)
         artifact_id=$(echo "$artifacts" | jq -r '.artifacts[] | select(.name=="image-tags") | .id')
 
