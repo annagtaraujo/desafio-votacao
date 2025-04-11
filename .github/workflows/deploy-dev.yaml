@@ -78,3 +78,7 @@ jobs:
       run: |
         envsubst < k8s/dev/deployment/backend.yaml | kubectl apply -f -
         envsubst < k8s/dev/deployment/frontend.yaml | kubectl apply -f -
+
+    - name: Debug: Check script version
+      run: |
+        echo "=== VERSÃO COM CURL ==="
