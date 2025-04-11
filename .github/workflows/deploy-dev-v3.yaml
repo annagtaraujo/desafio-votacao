@@ -1,4 +1,4 @@
-name: Deploy Minikube
+name: Deploy Minikube v3
 
 on:
   workflow_run:
@@ -64,18 +64,21 @@ jobs:
 
         unzip artifact.zip
 
-    - name: Export image tag variables
+    - name: Inspect image_tags.env
+      run: cat image_tags.env
+      
+    - name: Parse image tag variables
+      id: tags
       run: |
-        set -a
-        source image_tags.env
-        set +a
+        echo "BACKEND_IMAGE=$(grep BACKEND_IMAGE image_tags.env | cut -d '=' -f2-)" >> $GITHUB_ENV
+        echo "FRONTEND_IMAGE=$(grep FRONTEND_IMAGE image_tags.env | cut -d '=' -f2-)" >> $GITHUB_ENV
 
     - name: Apply Kubernetes configs
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
-        BACKEND_IMAGE: ${{ env.BACKEND_IMAGE }}
-        FRONTEND_IMAGE: ${{ env.FRONTEND_IMAGE }}
       run: |
+        echo "Usando BACKEND_IMAGE=$BACKEND_IMAGE"
+        echo "Usando FRONTEND_IMAGE=$FRONTEND_IMAGE"
         envsubst < k8s/dev/deployment/backend-deploy.yaml | kubectl apply -f -
         envsubst < k8s/dev/deployment/frontend-deploy.yaml | kubectl apply -f -
 
