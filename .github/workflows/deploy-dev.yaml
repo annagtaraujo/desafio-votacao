@@ -14,12 +14,14 @@ jobs:
       run: |
         echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > kubeconfig.yaml
 
-    - name: Set KUBECONFIG and test connection
+    - name: Test cluster access
+      env:
+        KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
-        export KUBECONFIG=$PWD/kubeconfig.yaml
         kubectl get pods -A
 
     - name: Apply Kubernetes configs
+      env:
+        KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
-        export KUBECONFIG=$PWD/kubeconfig.yaml
         kubectl apply -f k8s/dev/deployment/
