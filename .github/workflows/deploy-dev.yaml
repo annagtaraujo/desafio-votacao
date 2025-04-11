@@ -1,4 +1,4 @@
-name: Deploy Minikube Test
+name: Deploy Minikube
 
 on:
   workflow_run:
