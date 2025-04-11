@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend-votacao
-          image: annagtaraujo/backend-votacao:latest
+          image: annagtaraujo/backend-votacao:${BACKEND_IMAGE}
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
