@@ -1,4 +1,4 @@
-name: Deploy Minikube Test
+name: Deploy Minikube
 
 on:
   workflow_run:
@@ -35,10 +35,6 @@ jobs:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
         kubectl get pods -A
-
-    - name: Debug - Check script version
-      run: |
-        echo "=== VERSÃO COM CURL ==="
 
     - name: Download artifact using REST API
       env:
