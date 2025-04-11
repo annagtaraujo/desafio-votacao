@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <title>Votação</title>
-  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
   <h1>Vote!</h1>
   <button onclick="votar('opcao1')">Opção 1</button>
   <button onclick="votar('opcao2')">Opção 2</button>
 
-  <div class="g-recaptcha" data-sitekey="SUA_SITE_KEY"></div>
+  <div id="desafio"></div>
+  <input type="text" id="resposta" placeholder="Sua resposta" />
 
   <p id="mensagem"></p>
 
