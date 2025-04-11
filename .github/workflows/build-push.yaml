@@ -6,7 +6,7 @@ on:
 
 jobs:
   docker:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
@@ -42,3 +42,15 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/frontend-votacao:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/frontend-votacao:${{ steps.vars.outputs.sha_short }}
+
+    - name: Export image tags
+      run: |
+        echo "BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/backend-votacao:${{ steps.vars.outputs.sha_short }}" >> image_tags.env
+        echo "FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/frontend-votacao:${{ steps.vars.outputs.sha_short }}" >> image_tags.env
+
+    - name: Upload image tag artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: image-tags
+        path: image_tags.env
+        if-no-files-found: error
