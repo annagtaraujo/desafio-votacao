@@ -39,29 +39,28 @@ jobs:
 
     - name: Download image tag artifact via GH CLI
       env:
-        GH_TOKEN: ${{ github.token }}
+        GH_TOKEN: ${{ secrets.GH_PAT_ARTIFACTS_BBB }}
       run: |
         run_id=${{ github.event.workflow_run.id }}
-
+    
         echo "📦 Buscando artifacts do run: $run_id"
-
+    
         artifacts=$(gh api repos/${{ github.repository }}/actions/runs/$run_id/artifacts)
         artifact_id=$(echo "$artifacts" | jq -r '.artifacts[] | select(.name=="image-tags") | .id')
-
+    
         if [ -z "$artifact_id" ]; then
           echo "❌ Artifact 'image-tags' não encontrado."
-          echo "Artifacts disponíveis:"
-          echo "$artifacts" | jq -r '.artifacts[].name'
           exit 1
         fi
-
+    
         echo "✅ Artifact encontrado: $artifact_id — baixando..."
         gh api \
           -H "Accept: application/vnd.github+json" \
           repos/${{ github.repository }}/actions/artifacts/$artifact_id/zip \
           > artifact.zip
-
+    
         unzip artifact.zip
+
 
     - name: Export image tag variables
       run: |
