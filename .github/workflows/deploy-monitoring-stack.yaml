@@ -1,0 +1,24 @@
+name: Deploy Monitoring Stack
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Decode kubeconfig
+      run: |
+        echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > kubeconfig.yaml
+
+    - name: Apply manifests
+      env:
+        KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+      run: |
+        kubectl apply -f k8s/monitoring/prometheus-deploy.yaml
+        kubectl apply -f k8s/monitoring/grafana-deploy.yaml
+

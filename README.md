@@ -34,7 +34,9 @@ minikube start
 - Service Account
 - Secrets
 
-Criados os arquivos que estão no diretório k8s/config/, o Minikube já estará com as permissões prontas para que o github tenha a devida permissão de acesso ao cluster. É importante observar que, no cluster role binding, a permissão deve ser do tipo "cluster-admin":
+Antes eles estavam sendo criados por manifestos no diretório k8s/config/, mas foi feita uma modificação para que estes recursos fossem criados via Terraform (exceto a secret, que possui uma limitação por um erro no Terraform que não reconhece que o Service Account está criado, portanto apenas a secret será criada como manifesto). 
+
+Assim, o Minikube já estará com as permissões prontas para que o github tenha a devida permissão de acesso ao cluster. É importante observar que, no cluster role binding, a permissão deve ser do tipo "cluster-admin":
 
 ```
 roleRef:
@@ -43,19 +45,17 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-Para que o user do github possa aplicar as configurações via Actions. Acesse o diretório **k8s/config** para mais detalhes sobre os arquivos.
+Para que o user do github possa aplicar as configurações via Actions. Acesse o diretório **k8s/config** para mais detalhes sobre o manifesto da secret e o **infra/dev** para a configuração da infra do Minikube como código.
 
-Executa-se localmente os manifestos no minikube:
+Executa-se localmente o manifesto da secret no minikube:
 
 ```
-kubectl apply -f cluster-role.yaml
-kubectl apply -f secret.yaml
-kubectl apply -f service-account.yaml
+kubectl apply -f secret-github-sa.yaml
 ```
 
 5) A secret criada gerará um token, que será parte fundamental da configuração. Para retornar esse token, executar localmente:
 ```
-kubectl -n kube-system get secret terraform-sa-token -o jsonpath="{.data.token}" | base64 -d && echo
+kubectl -n kube-system get secret github-sa-token -o jsonpath="{.data.token}" | base64 -d && echo
 ```
 
 6) Esse token deverá estar atualizado no kubeconfig criado localmente para a criação do contexto no cluster para o Github. O arquivo **ngrok.yaml** ficará assim:
@@ -80,6 +80,13 @@ users:
     token: <token-retornado-no-passo-anterior>
 ```
 **Esse arquivo ficará localizado na máquina local, no .kube**
+
+Para testar o funcionamento da config, pode-se executar o comando:
+``` 
+KUBECONFIG=ngrok.yaml kubectl get pods -A
+```
+
+Assim, é possível comprovar que o novo contexto está funcional.
 
 7) Com essas informações em mãos, já é possível buscar as últimas peças para a montagem de permissões. Já posso começar expondo o meu minikube com:
 ```
