@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
 from collections import defaultdict
 from flask_cors import CORS
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 CORS(app)
 
+# Exposição de métricas no endpoint /metrics
+metrics = PrometheusMetrics(app)
 votos = defaultdict(int)
 
 @app.route('/votar', methods=['POST'])
