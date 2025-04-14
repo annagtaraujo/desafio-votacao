@@ -1,3 +1,8 @@
 FROM nginx:alpine
-COPY index.html /usr/share/nginx/html/index.html
-COPY script.js /usr/share/nginx/html/script.js
+
+# Copia o conteúdo estático
+COPY index.html /usr/share/nginx/html/
+COPY script.js /usr/share/nginx/html/
+
+# Configuração do Nginx
+COPY nginx.conf /etc/nginx/nginx.conf
