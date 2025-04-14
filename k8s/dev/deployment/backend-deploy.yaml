@@ -18,7 +18,8 @@ spec:
           image: ${BACKEND_IMAGE}
           imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - name: http-metrics
+              containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
@@ -45,6 +46,6 @@ spec:
     matchLabels:
       app: backend-votacao
   podMetricsEndpoints:
-    - port: "5000"
+    - port: "http-metrics"
       path: /metrics
       interval: 15s
