@@ -1,0 +1,16 @@
+#Kube Prometheus Stack usando Helm
+grafana:
+  service:
+    type: NodePort
+    nodePort: 30300
+
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30090
+
+prometheusOperator:
+  enabled: true
+
+alertmanager:
+  enabled: false

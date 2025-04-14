@@ -157,3 +157,11 @@ Alguns pontos de melhoria para este laboratório:
 - Criar os cluster role bindings, secrets e service-accounts via Terraform
 - Melhorar a segurança da secret (apesar que, para um laboratório local, funciona razoavelmente bem)
 - Automatizar a exposição do Minikube via ngrok e atualização do ngrok.yaml com um script em bash ou em python
+
+### Referências
+
+- [Deploy Kubernetes resources in a Minikube Cluster](https://dev.to/chefgs/deploy-kubernetes-resources-in-minikube-cluster-using-terraform-1p8o)
+- [Docker: Use Access Tokens](https://docs.docker.com/security/for-developers/access-tokens/)
+- [Ngrok: Setup and Installation](https://dashboard.ngrok.com/get-started/setup/linux)
+- [Terraform Registry: Cluster Role Binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding_v1)
+- [Terraform Registry: Service Account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account)
