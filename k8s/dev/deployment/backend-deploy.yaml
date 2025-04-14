@@ -40,7 +40,7 @@ metadata:
   name: backend-votacao
   namespace: dev
   labels:
-    release: kube-prometheus-stack
+    release: monitoring
 spec:
   selector:
     matchLabels:
@@ -49,3 +49,4 @@ spec:
     - port: "http-metrics"
       path: /metrics
       interval: 15s
+      
