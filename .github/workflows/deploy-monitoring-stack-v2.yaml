@@ -1,4 +1,4 @@
-name: Deploy Monitoring Stack
+name: Deploy Monitoring Stack using Helm
 
 on:
   push:
