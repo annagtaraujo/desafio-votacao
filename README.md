@@ -12,6 +12,7 @@ As ferramentas utilizadas para a criação deste ambiente foram:
 - Ngrok
 - Terraform
 - Github Actions
+- Helm
 
 Este ambiente para o desafio foi criado pensando em uma maior otimização de custos (para não utilizar clouds públicas).
 
@@ -127,7 +128,7 @@ Isso se deve pela volatilidade do endereço criado pelo ngrok toda vez que ele �
 
 ### 2.2 Gerenciamento da infraestrutura
 
-No diretório **infra/dev** é possivel encontrar 2 arquivos de configuração do terraform, que setam o minikube como provider e criam o namespace via terraform. Por enquanto, só está sendo criado o namespace *dev*.
+No diretório **infra/dev** é possivel encontrar 2 arquivos de configuração do terraform, que setam o minikube como provider e criam os namespaces, service account e cluster role bindings via terraform. Por enquanto, só está sendo criado o namespace *dev* e *monitoring*.
 
 ### 2.3 Criação de imagens Docker e build-push via Github Actions
 
@@ -154,14 +155,16 @@ No diretório **k8s/dev/deployment**, encontram-se os arquivos yaml que criam o 
 
 Alguns pontos de melhoria para este laboratório:
 
-- Criar os cluster role bindings, secrets e service-accounts via Terraform
+- Armazenar os votos em um DB
+- Criar um chart para deployar os serviços do app via Helm
 - Melhorar a segurança da secret (apesar que, para um laboratório local, funciona razoavelmente bem)
 - Automatizar a exposição do Minikube via ngrok e atualização do ngrok.yaml com um script em bash ou em python
 
-### Referências
+### 4. Referências
 
 - [Deploy Kubernetes resources in a Minikube Cluster](https://dev.to/chefgs/deploy-kubernetes-resources-in-minikube-cluster-using-terraform-1p8o)
 - [Docker: Use Access Tokens](https://docs.docker.com/security/for-developers/access-tokens/)
 - [Ngrok: Setup and Installation](https://dashboard.ngrok.com/get-started/setup/linux)
 - [Terraform Registry: Cluster Role Binding](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cluster_role_binding_v1)
 - [Terraform Registry: Service Account](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/service_account)
+- [How to create a monitoring stack using kube-prometheus-stack](https://medium.com/israeli-tech-radar/how-to-create-a-monitoring-stack-using-kube-prometheus-stack-part-1-eff8bf7ba9a9)
