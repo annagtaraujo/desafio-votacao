@@ -1,4 +1,5 @@
-#Kube Prometheus Stack usando Helm
+# Kube Prometheus Stack usando Helm
+# Assim posso usar o ServiceMonitor/PodMonitor de maneira mais enxuta
 grafana:
   service:
     type: NodePort
