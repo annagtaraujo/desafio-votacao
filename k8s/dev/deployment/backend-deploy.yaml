@@ -22,7 +22,8 @@ spec:
           image: ${BACKEND_IMAGE}
           imagePullPolicy: Always
           ports:
-            - containerPort: 5000
+            - name: http 
+              containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
@@ -36,3 +37,20 @@ spec:
     - protocol: TCP
       port: 5000
       targetPort: 5000
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: backend-votacao
+  namespace: monitoring  # Namespace onde o Prometheus está
+spec:
+  selector:
+    matchLabels:
+      app: backend-votacao
+  namespaceSelector:
+    matchNames:
+      - dev
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
