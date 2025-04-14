@@ -3,7 +3,7 @@ name: Deploy Minikube v3
 on:
   workflow_run:
     workflows: ["Build and Push Docker Images"]
-    branches: [main, dev]
+    branches: [main]
     types:
       - completed
 
