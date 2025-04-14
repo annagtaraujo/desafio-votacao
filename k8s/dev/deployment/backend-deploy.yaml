@@ -12,18 +12,13 @@ spec:
     metadata:
       labels:
         app: backend-votacao
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "5000"
-        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: backend-votacao
           image: ${BACKEND_IMAGE}
           imagePullPolicy: Always
           ports:
-            - name: http 
-              containerPort: 5000
+            - containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
@@ -42,15 +37,14 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: backend-votacao
-  namespace: monitoring  # Namespace onde o Prometheus está
+  namespace: dev
+  labels:
+    release: kube-prometheus-stack
 spec:
   selector:
     matchLabels:
       app: backend-votacao
-  namespaceSelector:
-    matchNames:
-      - dev
   podMetricsEndpoints:
-    - port: http
+    - port: "5000"
       path: /metrics
       interval: 15s
