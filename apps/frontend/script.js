@@ -14,7 +14,7 @@ function votar(opcao) {
     return;
   }
 
-  fetch("http://backend-service:5000/votar", {
+  fetch("/votar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ opcao })
