@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: postgres-init-job
+  namespace: dev
+spec:
+  template:
+    spec:
+      containers:
+        - name: init-postgres
+          image: postgres:15
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Aguardando PostgreSQL...";
+              until pg_isready -h postgres-service -U postgres; do
+                sleep 2;
+              done;
+              echo "PostgreSQL disponível. Executando script...";
+              psql -h postgres-service -U postgres -d votacao -c "
+              CREATE TABLE IF NOT EXISTS votos (
+                  id SERIAL PRIMARY KEY,
+                  opcao VARCHAR(100) NOT NULL,
+                  timestamp TIMESTAMPTZ DEFAULT NOW()
+              );"
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: postgres-password
+      restartPolicy: OnFailure
