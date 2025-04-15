@@ -1,9 +1,9 @@
-name: Deploy Minikube v3
+name: Deploy Minikube v5
 
 on:
   workflow_run:
     workflows: ["Build and Push Docker Images"]
-    branches: [main]
+    branches: [dev, main]
     types:
       - completed
 
@@ -16,6 +16,9 @@ jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+
+    env:
+      INIT_DB: ${{ github.event.inputs.init_db }}
 
     steps:
     - name: Checkout repo
@@ -72,13 +75,31 @@ jobs:
       run: |
         echo "BACKEND_IMAGE=$(grep BACKEND_IMAGE image_tags.env | cut -d '=' -f2-)" >> $GITHUB_ENV
         echo "FRONTEND_IMAGE=$(grep FRONTEND_IMAGE image_tags.env | cut -d '=' -f2-)" >> $GITHUB_ENV
+        echo "WORKER_IMAGE=$(grep WORKER_IMAGE image_tags.env | cut -d '=' -f2-)" >> $GITHUB_ENV
 
-    - name: Apply Kubernetes configs
+    - name: Apply Kubernetes deployments for infrastructure
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
         echo "Usando BACKEND_IMAGE=$BACKEND_IMAGE"
         echo "Usando FRONTEND_IMAGE=$FRONTEND_IMAGE"
+        echo "Usando WORKER_IMAGE=$WORKER_IMAGE"
         envsubst < k8s/dev/deployment/backend-deploy.yaml | kubectl apply -f -
         envsubst < k8s/dev/deployment/frontend-deploy.yaml | kubectl apply -f -
+        envsubst < k8s/dev/deployment/worker-deploy.yaml | kubectl apply -f -
+        echo "Implementando Redis e Postgres"
+        kubectl apply -f k8s/dev/deployment/postgres-deploy.yaml
+        kubectl apply -f k8s/dev/deployment/redis-deploy.yaml
+        kubectl wait --for=condition=ready pod -l app=redis -n dev --timeout=300s
+        kubectl wait --for=condition=ready pod -l app=postgres -n dev --timeout=300s
+        echo "Implementando Redis e Postgres Exporters"
+        kubectl apply -f k8s/dev/deployment/postgres-exporter-deploy.yaml
+        kubectl apply -f k8s/dev/deployment/redis-exporter-deploy.yaml
 
+    - name: Apply Kubernetes Job (Create Postgres Table if INIT_DB=true)
+      env:
+        KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+      if: env.INIT_DB == 'true'
+      run: |
+        echo "Criando init Job para o Postgres"
+        kubectl apply -f k8s/dev/job/postgres-init-job.yaml
