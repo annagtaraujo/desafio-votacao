@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: ${WORKER_IMAGE}
+          imagePullPolicy: Always
+          env:
+            - name: REDIS_HOST
+              value: redis-service.dev.svc.cluster.local
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_QUEUE
+              value: "votos"
+            - name: PGHOST
+              value: postgres-service.dev.svc.cluster.local
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: votacao
+            - name: PGUSER
+              value: postgres
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password

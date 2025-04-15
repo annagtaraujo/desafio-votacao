@@ -41,6 +41,15 @@ jobs:
           ${{ secrets.DOCKERHUB_USERNAME }}/backend-votacao:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/backend-votacao:${{ steps.vars.outputs.sha_short }}
 
+    - name: Build and push worker (queue consumer) image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./apps/worker
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/worker:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/worker:${{ steps.vars.outputs.sha_short }}
+
     - name: Build and push frontend image
       uses: docker/build-push-action@v5
       with:
@@ -55,6 +64,7 @@ jobs:
       run: |
         echo "BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/backend-votacao:${{ steps.vars.outputs.sha_short }}" >> image_tags.env
         echo "FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/frontend-votacao:${{ steps.vars.outputs.sha_short }}" >> image_tags.env
+        echo "WORKER_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/worker:${{ steps.vars.outputs.sha_short }}" >> image_tags.env
 
     - name: Upload image tag artifact
       uses: actions/upload-artifact@v4
