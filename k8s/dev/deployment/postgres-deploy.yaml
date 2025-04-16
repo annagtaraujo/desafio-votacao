@@ -33,6 +33,13 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgres-storage
+          resources: # Limits para evitar excesso de consumo do cluster no escalonamento do Backend
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
       volumes:
         - name: postgres-storage
           emptyDir: {}
