@@ -30,5 +30,4 @@ jobs:
       run: |
         helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
           --namespace monitoring \
-          --create-namespace \
-          -f k8s/monitoring/values.yaml
+          -f k8s/monitoring/kube-prometheus-stack/values.yaml
