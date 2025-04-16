@@ -18,6 +18,13 @@ spec:
           image: redis:7-alpine
           ports:
             - containerPort: 6379
+          resources: # Limits para evitar excesso de consumo do cluster no escalonamento do Backend
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
