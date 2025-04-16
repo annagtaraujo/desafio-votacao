@@ -31,7 +31,7 @@ jobs:
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
-        helm install k6-operator grafana/k6-operator --namespace monitoring
+        helm install k6-operator grafana/k6-operator --namespace monitoring --wait --timeout 5m
 
     - name: Apply workload test config
       env:
