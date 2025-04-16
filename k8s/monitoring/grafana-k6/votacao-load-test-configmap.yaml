@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: votacao-k6-script
+  namespace: monitoring
+data:
+  script.js: |
+    import http from 'k6/http';
+    import { sleep } from 'k6';
+
+    export let options = {
+      vus: 1000,          // 1000 usuários virtuais
+      duration: '30s',    // cada um envia 1 voto por segundo (aproximadamente)
+    };
+
+    export default function () {
+      const url = 'http://backend-service.dev.svc.cluster.local:5000/votar';
+      const payload = JSON.stringify({ voto: Math.random() < 0.5 ? "gracyanne" : "belo" });
+      const params = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      http.post(url, payload, params);
+      sleep(1); // simula 1 req/s por VU
+    }

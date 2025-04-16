@@ -34,6 +34,6 @@ jobs:
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
-        kubectl apply -f k8s/monitoring/grafana-k6/votacao-script-configmap.yaml
+        kubectl apply -f k8s/monitoring/grafana-k6/votacao-load-test-configmap.yaml
         kubectl delete testrun.v1alpha1.k6.io votacao-load-test --namespace monitoring --ignore-not-found
         kubectl apply -f k8s/monitoring/grafana-k6/votacao-load-test.yaml
