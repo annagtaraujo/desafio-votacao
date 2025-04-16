@@ -9,7 +9,7 @@ import json
 app = Flask(__name__)
 CORS(app)
 
-# Métricas para o Prometheus
+# Métricas personalizadas de votos para o Prometheus
 metrics = PrometheusMetrics(app, group_by='endpoint')
 metrics.info('app_info', 'Informações do app de votação', version='1.0.0')
 
@@ -53,7 +53,7 @@ def votar():
         app.logger.error(f"Erro ao enviar voto para Redis: {e}")
         return jsonify({"mensagem": "Erro ao registrar voto"}), 500
 
-    # Métricas
+    # Alimenta as métricas
     if opcao == 'Gracyanne Barbosa':
         votos_gracyanne.inc()
     elif opcao == 'Belo':
