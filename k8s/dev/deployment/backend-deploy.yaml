@@ -45,7 +45,7 @@ metadata:
   name: backend-votacao
   namespace: dev
   labels:
-    release: monitoring
+    release: monitoring # Para que o Prometheus encontre o Monitor
 spec:
   selector:
     matchLabels:

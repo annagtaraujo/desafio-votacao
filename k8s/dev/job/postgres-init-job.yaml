@@ -10,7 +10,7 @@ spec:
         - name: init-postgres
           image: postgres:15
           command: ["sh", "-c"]
-          args:
+          args: # Estou criando a tabela no worker.py, por enquanto. Preciso evoluir para criação no job passando o INIT_DB e remover do worker.py
             - |
               echo "Aguardando PostgreSQL...";
               until pg_isready -h postgres-service -U postgres; do

@@ -16,6 +16,17 @@ As ferramentas utilizadas para a criação deste ambiente foram:
 
 Este ambiente para o desafio foi criado pensando em uma maior otimização de custos (para não utilizar clouds públicas).
 
+## 1.1 Arquitetura
+
+![Arquitetura do Laboratório](image.png)
+
+Na arquitetura mostrada na imagem acima, pode demonstrar que:
+- O usuário votante acessará o frontend pelo seu respectivo service
+- O nginx que está dentro da imagem Docker do frontend tem em seu nginx.conf as rotas que precisam ser chamadas no service do backend
+- O deployment backend-votacao (acessível pelo seu respectivo service), valida o desafio anti-robô (que, neste laboratório, é uma operação de soma simples para diminuição de complexidade) e publica em uma fila Redis
+- O worker, que é uma outra aplicação que compõe o ecossistema do backend, consome essa fila do Redis e publica os votos no PostgreSQL
+
+
 ## 2. Configurações de Uso
 
 ### 2.1 Criação e exposição do Minikube local para uso do Github Actions
@@ -128,7 +139,7 @@ Isso se deve pela volatilidade do endereço criado pelo ngrok toda vez que ele �
 
 ### 2.2 Gerenciamento da infraestrutura
 
-No diretório **infra/dev** é possivel encontrar 2 arquivos de configuração do terraform, que setam o minikube como provider e criam os namespaces, service account e cluster role bindings via terraform. Por enquanto, só está sendo criado o namespace *dev* e *monitoring*.
+No diretório **infra/dev** é possivel encontrar 2 arquivos de configuração do terraform, que setam o minikube como provider e criam os namespaces, service account e cluster role bindings via terraform. Por enquanto, só estão sendo criados os namespaces *dev* e *monitoring*.
 
 ### 2.3 Criação de imagens Docker e build-push via Github Actions
 
@@ -151,13 +162,107 @@ A criação do token para o Dockerhub pode ser feita acessando a conta do Docker
 
 No diretório **k8s/dev/deployment**, encontram-se os arquivos yaml que criam o conjunto de deployment e service das aplicações, utilizando a imagem que foi "buildada" e "empurrada" pelo workflow do Github Actions. Esses arquivos são aplicados utilizando workflows do Github Actions. Mais detalhes sobre o funcionamento do workflow de deploy podem ser encontrados no item 2.1 deste documento.
 
+A secret necessária para a autenticação no PostgreSql contida em **/k8s/config** deve ser criada utilizando:
+
+```
+kubectl apply -f secret-postgres.yaml
+```
+
+É importante relembrar a razão: este laboratório apresentou uma limitação na criação de secrets via IaC e, portanto, estão sendo criadas **antes** dos deployments, como preparação do ambiente.
+
+### 2.5 Monitoramento
+
+O monitoramento foi criado utilizando a kube-prometheus-stack do Helm. Isso se deve ao fato de que a stack já possui todos os parâmetros necessários para que o Service Discovery funcione.
+
+Seus manifestos podem ser encontrados no path **/k8s/monitoring**. Eles são aplicados via workflow, pelo **deploy-monitoring-stack-v2.yaml**.
+
+O monitoramento lê dados expostos pelo:
+
+- Backend (/metrics no PodMonitor do backend-deploy.yaml)
+- Redis (k8s/dev/deployment/redis-exporter-deploy.yaml)
+- PostgreSql (k8s/dev/deployment/postgres-exporter-deploy.yaml)
+
+Com isso, é possível ver:
+
+#### 2.5.1 Métricas da aplicação do backend (sistema de votação)
+
+O backend possui algumas métricas instrumentadas do tipo prometheus_client do Python:
+
+✅ Total de votos por opção:
+promql:
+```
+votos_total
+```
+
+✅ Separando o somatório por opões disponíveis para voto:
+
+promql:
+```
+sum by (opcao) (votos_total)
+```
+
+⏱️ Tempo médio de resposta das requisições:
+promql:
+```
+rate(flask_http_request_duration_seconds_sum[1m]) 
+/ 
+rate(flask_http_request_duration_seconds_count[1m])
+```
+
+❌ Número de falhas por código HTTP:
+promql
+```
+sum by (status_code) (rate(flask_http_request_total{status_code!~"2.."}[5m]))
+```
+
+#### 2.5.2 Métricas do Redis (via redis-exporter)
+
+O Redis está com métricas expostas (via redis-exporter):
+
+📊 Tamanho da fila de votos:
+Pelo nome da fila (votos):
+
+promql:
+```
+redis_list_length{key="votos"}
+```
+
+🔁 Taxa de enfileiramento:
+promql
+```
+rate(redis_commands_total{command="lpush"}[1m])
+```
+
+✅ Taxa de consumo:
+promql
+```
+rate(redis_commands_total{command="rpop"}[1m])
+```
+
+#### 2.5.3 Métricas do PostgreSQL
+
+Via postgres-exporter:
+
+📄 Conexões ativas:
+promql
+```
+pg_stat_activity_count
+```
+
+🔁 Transações por segundo:
+promql
+```
+rate(pg_stat_database_xact_commit[1m]) 
++ 
+rate(pg_stat_database_xact_rollback[1m])
+```
+
 ### 3. Pontos de Melhoria (WIP)
 
 Alguns pontos de melhoria para este laboratório:
 
-- Armazenar os votos em um DB
-- Criar um chart para deployar os serviços do app via Helm
-- Melhorar a segurança da secret (apesar que, para um laboratório local, funciona razoavelmente bem)
+- Criar um chart para deployar os serviços do app via Helm com toda a estrutura necessária (Services, ServiceMonitor, PodMonitor, e afins)
+- Melhorar a segurança das secrets (apesar que, para um laboratório local, funciona razoavelmente bem)
 - Automatizar a exposição do Minikube via ngrok e atualização do ngrok.yaml com um script em bash ou em python
 
 ### 4. Referências
