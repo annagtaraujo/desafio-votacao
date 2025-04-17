@@ -6,7 +6,6 @@ metadata:
 spec:
   parallelism: 1
   script:
-    source:
-      type: ConfigMap
+    configMap:
       name: votacao-k6-script
       file: script.js
