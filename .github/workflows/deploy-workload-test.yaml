@@ -2,7 +2,7 @@ name: Deploy Workload Test with Grafana k6
 
 on:
   workflow_run:
-    workflows: ["Deploy test Stack using Helm"]
+    workflows: ["Deploy Monitoring Stack using Helm"]
     branches: [main]
     types:
       - completed
