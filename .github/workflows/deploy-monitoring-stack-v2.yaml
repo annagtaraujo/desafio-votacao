@@ -46,6 +46,5 @@ jobs:
         helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
           --namespace monitoring \
           --create-namespace \
-          --wait \
           --timeout 10m \
           -f k8s/monitoring/kube-prometheus-stack/values.yaml
