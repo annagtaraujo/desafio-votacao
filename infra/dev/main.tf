@@ -10,6 +10,12 @@ resource "kubernetes_namespace" "monitoring" {
   }
 }
 
+resource "kubernetes_namespace" "test" {
+  metadata {
+    name = "test"
+  }
+}
+
 # -----------------------------------------------
 # SERVICE ACCOUNT : AUTENTICAÇÃO DO
 # GITHUB NO MINIKUBE
