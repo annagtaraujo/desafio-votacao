@@ -264,6 +264,9 @@ Alguns pontos de melhoria para este laboratório:
 - Criar um chart para deployar os serviços do app via Helm com toda a estrutura necessária (Services, ServiceMonitor, PodMonitor, e afins)
 - Melhorar a segurança das secrets (apesar que, para um laboratório local, funciona razoavelmente bem)
 - Automatizar a exposição do Minikube via ngrok e atualização do ngrok.yaml com um script em bash ou em python
+- Automatizar a destruição do ambiente
+- Criar um workflow para o Terraform
+- Adicionar um armazenamento de logs (Loki)
 
 ### 4. Referências
 
