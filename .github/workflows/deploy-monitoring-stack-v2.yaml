@@ -2,7 +2,7 @@ name: Deploy Monitoring Stack using Helm
 
 on:
   workflow_run:
-    workflows: ["Build and Push Docker Images"]
+    workflows: ["Deploy Minikube v6"]
     branches: [main]
     types:
       - completed
