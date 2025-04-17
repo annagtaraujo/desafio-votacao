@@ -35,7 +35,7 @@ jobs:
           STATUS=$(helm status monitoring -n monitoring -o json | jq -r .info.status)
           if [[ "$STATUS" == "pending-upgrade" || "$STATUS" == "pending-install" ]]; then
             echo "Release in $STATUS state. Uninstalling..."
-            helm uninstall monitoring -n monitoring
+            helm uninstall monitoring -n monitoring || true
           fi
         fi
         
@@ -47,5 +47,5 @@ jobs:
           --namespace monitoring \
           --create-namespace \
           --wait \
-          --timeout 5m \
+          --timeout 10m \
           -f k8s/monitoring/kube-prometheus-stack/values.yaml
