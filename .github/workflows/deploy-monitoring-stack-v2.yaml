@@ -27,6 +27,18 @@ jobs:
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo update
 
+    - name: Cleanup Helm release if locked
+      env:
+        KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+      run: |
+        if helm status monitoring -n monitoring > /dev/null 2>&1; then
+          STATUS=$(helm status monitoring -n monitoring -o json | jq -r .info.status)
+          if [[ "$STATUS" == "pending-upgrade" || "$STATUS" == "pending-install" ]]; then
+            echo "Release in $STATUS state. Uninstalling..."
+            helm uninstall monitoring -n monitoring
+          fi
+        fi
+        
     - name: Install kube-prometheus-stack
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
