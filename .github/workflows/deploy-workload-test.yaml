@@ -31,12 +31,12 @@ jobs:
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
-        helm install k6-operator grafana/k6-operator --namespace test --wait --timeout 10m
+        helm install k6-operator grafana/k6-operator --namespace monitoring --wait --timeout 10m
 
     - name: Apply workload test config
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
       run: |
         kubectl apply -f k8s/test/grafana-k6/votacao-load-test-configmap.yaml
-        kubectl delete testrun.v1alpha1.k6.io votacao-load-test --namespace test --ignore-not-found
+        kubectl delete testrun.v1alpha1.k6.io votacao-load-test --namespace monitoring --ignore-not-found
         kubectl apply -f k8s/test/grafana-k6/votacao-load-test.yaml
