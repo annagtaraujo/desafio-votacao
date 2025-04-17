@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: votacao-k6-script
-  namespace: test
+  namespace: monitoring
 data:
   script.js: |
     import http from 'k6/http';

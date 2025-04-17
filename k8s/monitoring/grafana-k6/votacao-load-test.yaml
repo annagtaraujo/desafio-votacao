@@ -2,7 +2,7 @@ apiVersion: k6.io/v1alpha1
 kind: TestRun
 metadata:
   name: votacao-load-test
-  namespace: test
+  namespace: monitoring
 spec:
   parallelism: 1
   script:
