@@ -15,3 +15,12 @@ prometheusOperator:
 
 alertmanager:
   enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeControllerManager:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
