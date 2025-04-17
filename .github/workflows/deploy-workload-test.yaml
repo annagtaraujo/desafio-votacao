@@ -27,6 +27,16 @@ jobs:
         helm repo add grafana https://grafana.github.io/helm-charts
         helm repo update
 
+    - name: Create test namespace with Helm labels
+      env:
+        KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+      run: |
+        kubectl delete namespace test --ignore-not-found
+        kubectl create namespace test
+        kubectl label namespace test app.kubernetes.io/managed-by=Helm
+        kubectl annotate namespace test meta.helm.sh/release-name=k6-operator
+        kubectl annotate namespace test meta.helm.sh/release-namespace=test
+    
     - name: Install Grafana k6
       env:
         KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
